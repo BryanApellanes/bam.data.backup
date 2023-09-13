@@ -14,10 +14,10 @@ using System.Data;
 
 namespace Bam.Net.Data.Repositories
 {
-	/// <summary>
-	/// Represents a backup of a Dao database schema and the data therein
-	/// </summary>
-	public partial class DaoBackup
+    /// <summary>
+    /// Represents a backup of a Dao database schema and the data therein
+    /// </summary>
+    public partial class DaoBackup
 	{
 		public DaoBackup(Assembly daoAssembly, Database databaseToBackup, IRepository backupRepository)			
 		{

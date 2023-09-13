@@ -11,11 +11,11 @@ using Microsoft.CodeAnalysis;
 
 namespace Bam.Net.Data.Repositories
 {
-	/// <summary>
-	/// A Data Transfer Object.  Represents the properties
-	/// of Dao types without the associated methods.  
-	/// </summary>
-	public partial class Dto
+    /// <summary>
+    /// A Data Transfer Object.  Represents the properties
+    /// of Dao types without the associated methods.  
+    /// </summary>
+    public partial class Dto
     {
         public const string DefaultNamespace = "Bam.Net.Data.Dto";
         public string ToJson()
