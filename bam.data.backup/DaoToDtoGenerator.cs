@@ -78,7 +78,7 @@ namespace Bam.Net.Data.Repositories
 		public GeneratedAssemblyInfo GenerateDtoAssembly()
         {
             string nameSpace = GetNamespace();
-            return GenerateDtoAssembly("{0}.Dtos"._Format(nameSpace));
+            return GenerateDtoAssembly("{0}.Dtos".Format(nameSpace));
         }
 
         public GeneratedAssemblyInfo GenerateDtoAssembly(string nameSpace)
@@ -89,7 +89,7 @@ namespace Bam.Net.Data.Repositories
         public GeneratedAssemblyInfo GenerateDtoAssembly(string nameSpace, string fileName)
         {
             Type oneDao = DaoAssembly.GetTypes().FirstOrDefault(t => t.HasCustomAttributeOfType<TableAttribute>());
-            string writeSourceTo = Path.Combine(RuntimeSettings.ProcessDataFolder, "DtoTemp_{0}"._Format(Dao.ConnectionName(oneDao)));
+            string writeSourceTo = Path.Combine(RuntimeSettings.ProcessDataFolder, "DtoTemp_{0}".Format(Dao.ConnectionName(oneDao)));
             DirectoryInfo sourceDir = SetSourceDir(writeSourceTo);
 
             WriteDtoSource(nameSpace, writeSourceTo);
@@ -120,7 +120,7 @@ namespace Bam.Net.Data.Repositories
 
         public string GetDefaultFileName()
         {
-            return "_{0}_{1}_.dll"._Format(
+            return "_{0}_{1}_.dll".Format(
                 GetNamespace(),
                 DaoAssembly.GetTypes()
                 .Where(t => t.HasCustomAttributeOfType<TableAttribute>())

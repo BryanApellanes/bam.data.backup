@@ -117,7 +117,7 @@ namespace Bam.Net.Data.Repositories // shared
 
 		public new string Name => Database.Name;
 
-		public new Incubator ServiceProvider
+		public new DependencyProvider ServiceProvider
 		{
 			get => Database.ServiceProvider;
 			set => Database.ServiceProvider = value;

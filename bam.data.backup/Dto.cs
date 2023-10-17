@@ -171,7 +171,7 @@ namespace Bam.Net.Data.Repositories
 
         private static void WriteRenderedDto(string writeSourceTo, DtoModel dtoModel)
         {
-            string csFile = "{0}.cs"._Format(dtoModel.TypeName);
+            string csFile = "{0}.cs".Format(dtoModel.TypeName);
             FileInfo csFileInfo = new FileInfo(Path.Combine(writeSourceTo, csFile));
             if (!csFileInfo.Directory.Exists)
             {

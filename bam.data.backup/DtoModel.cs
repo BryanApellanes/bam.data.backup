@@ -26,7 +26,7 @@ namespace Bam.Net.Data.Repositories
 			foreach(PropertyInfo p in dynamicDtoType.GetProperties())
 			{
 				Type type = (p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>)) ? Nullable.GetUnderlyingType(p.PropertyType) : p.PropertyType;
-				properties.Add("\t\tpublic {0} {1} {{get; set;}}\r\n"._Format(type.Name, p.Name));
+				properties.Add("\t\tpublic {0} {1} {{get; set;}}\r\n".Format(type.Name, p.Name));
 				types.Add(type);
 			}
 			Properties = properties.ToArray();
@@ -44,7 +44,7 @@ namespace Bam.Net.Data.Repositories
             HashSet<Type> types = new HashSet<Type>();
             foreach(DtoPropertyModel p in propertyModels)
             {
-                properties.Add("\t\tpublic {0} {1} {{get; set;}}\r\n"._Format(p.PropertyType, p.PropertyName));
+                properties.Add("\t\tpublic {0} {1} {{get; set;}}\r\n".Format(p.PropertyType, p.PropertyName));
                 types.Add(p.PropertyInfo.PropertyType);
             }
             MetadataReferenceResolver = new MetadataReferenceResolver(types.ToArray());
