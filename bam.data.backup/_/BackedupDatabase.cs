@@ -15,10 +15,9 @@ namespace Bam.Net.Data.Repositories //core
 {
 	public partial class BackedupDatabase: Database
 	{
-		public BackedupDatabase(Assembly daoAssembly, Database databaseToTrack, string objectRepoPath = ".\\DbBackupRepo")
+		public BackedupDatabase(Assembly daoAssembly, IRepository repository, IDatabase databaseToTrack)
 		{
-            DirectoryInfo backupDir = new DirectoryInfo(objectRepoPath);
-			this.Repository = new DaoRepository(databaseToTrack, Log.Default, backupDir.Name);
+			this.Repository = repository;
 			this.Backup = new DaoBackup(daoAssembly, databaseToTrack, this.Repository);
 		}
 	}

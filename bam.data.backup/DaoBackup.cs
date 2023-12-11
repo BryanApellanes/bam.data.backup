@@ -19,7 +19,7 @@ namespace Bam.Net.Data.Repositories
     /// </summary>
     public partial class DaoBackup
 	{
-		public DaoBackup(Assembly daoAssembly, Database databaseToBackup, IRepository backupRepository)			
+		public DaoBackup(Assembly daoAssembly, IDatabase databaseToBackup, IRepository backupRepository)			
 		{
 			this.DatabaseToBackup = databaseToBackup;
 			this.DatabaseToRestoreTo = new SQLiteDatabase(DataProvider.Current.AppDataDirectory, "{0}_Restore".Format(databaseToBackup.ConnectionName));
@@ -43,7 +43,7 @@ namespace Bam.Net.Data.Repositories
 		/// <summary>
 		/// The database to backup
 		/// </summary>
-		public Database DatabaseToBackup { get; private set; }
+		public IDatabase DatabaseToBackup { get; private set; }
 
 		/// <summary>
 		/// The repository where the database is backed up to.
@@ -97,11 +97,11 @@ namespace Bam.Net.Data.Repositories
 			foreignKeyProperties.Each(prop =>
 			{
 				ForeignKeyAttribute fk = prop.GetCustomAttribute<ForeignKeyAttribute>(); 
-				dao.Property(prop.Name, temp[fk.ReferencedTable].IdValue);
+				dao.Property(prop.Name, temp[fk.ReferencedTable].DbId);
 			});
 		}
 
-		protected internal void CorrectForeignKeys(HashSet<OldToNewIdMapping> oldToNewIdMappings, Database source, Database destination)
+		protected internal void CorrectForeignKeys(HashSet<OldToNewIdMapping> oldToNewIdMappings, IDatabase source, Database destination)
 		{
 			Dictionary<string, OldToNewIdMapping> byUuid = oldToNewIdMappings.ToDictionary(otn => otn.Uuid);
 			
@@ -140,14 +140,14 @@ namespace Bam.Net.Data.Repositories
                         return table.TableName.Equals(fk.Table);
 					});
 					SqlStringBuilder oldReferencerSelector = source.GetService<SqlStringBuilder>();
-					oldReferencerSelector.Select(fk.Table).Where(new AssignValue(fk.Name, oldReferencedDao.IdValue));
+					oldReferencerSelector.Select(fk.Table).Where(new AssignValue(fk.Name, oldReferencedDao.DbId));
 					List<object> oldReferencingDaoInstances = source.GetDataTable(oldReferencerSelector, CommandType.Text, oldParameterBuilder.GetParameters(oldReferencerSelector)).ToListOf(referencingDaoType);
 
 					if (oldReferencingDaoInstances.Count > 0)
 					{
 						List<string> oldReferencingDaoInstanceUuids = oldReferencingDaoInstances.Select(o => o.Property<string>("Uuid")).ToList();
 
-						ulong oldReferencedId = oldReferencedDao.IdValue.Value;
+						ulong oldReferencedId = oldReferencedDao.DbId.Value;
 						// get the new referenced id
 						ulong whatItShouldBeNow = byUuid[oldReferencedDao.Property<string>("Uuid")].NewId;
 
@@ -263,7 +263,7 @@ namespace Bam.Net.Data.Repositories
 				{
 					string uuid = Meta.GetUuid(poco, true);
 					Dao dao = (Dao)poco.CopyAs(daoType);
-					dao.IdValue = null;
+					dao.DbId = null;
 					dao.DataRow = null;
 					dao.ForceInsert = true;
 					dao.UniqueFilterProvider = (d) => Query.Where("Uuid") == uuid;
@@ -276,7 +276,7 @@ namespace Bam.Net.Data.Repositories
 						PocoType = pocoType,
 						DaoType = daoType,
 						OldId = (ulong)poco.Property("Id"),
-						NewId = (ulong)dao.IdValue,
+						NewId = (ulong)dao.DbId,
 						Uuid = uuid
 					};
 

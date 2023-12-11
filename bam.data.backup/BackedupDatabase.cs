@@ -16,7 +16,7 @@ namespace Bam.Net.Data.Repositories // shared
 	{
 		public IRepository Repository { get; private set; }
 
-		protected Database Database => Backup.DatabaseToBackup;
+		protected IDatabase Database => Backup.DatabaseToBackup;
 
 		public DaoBackup Backup { get; set; }
 

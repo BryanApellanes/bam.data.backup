@@ -34,7 +34,6 @@ namespace Bam.Net.Data.Repositories
 			Namespace = nameSpace;
 			MetadataReferenceResolver = new MetadataReferenceResolver(types.ToArray());
 			ReferenceTypes = types;
-			//LoadEmbeddedHandlebars();
 			CleanTypeName();
 		}
 
@@ -52,7 +51,6 @@ namespace Bam.Net.Data.Repositories
             TypeName = typeName;
             Properties = properties.ToArray();
             Namespace = nameSpace;
-            //LoadEmbeddedHandlebars();
             CleanTypeName();
         }
 
@@ -74,7 +72,6 @@ namespace Bam.Net.Data.Repositories
 	        ReferenceTypes = types;
 	        Properties = propertyNames.ToArray();
 	        Namespace = nameSpace;
-	        //LoadEmbeddedHandlebars();
 	        CleanTypeName();
         }
 
@@ -98,11 +95,6 @@ namespace Bam.Net.Data.Repositories
 			ReferenceTypes.Each(t => result.Append($"\tusing {t.Namespace};\r\n"));
 			return result.ToString();
 		}
-		
-/*		private void LoadEmbeddedHandlebars()
-		{
-			Net.Handlebars.HandlebarsEmbeddedResources = new HandlebarsEmbeddedResources(this.GetType().Assembly);
-		}*/
 
 		private void CleanTypeName()
 		{

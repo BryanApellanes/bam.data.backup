@@ -15,10 +15,10 @@ namespace Bam.Net.Data.Repositories
     /// <summary>
     /// Represents a backup of a Dao database schema and the data therein
     /// </summary>
-    public partial class DaoBackup // core
+/*    public partial class DaoBackup // core
     {
-        public DaoBackup(Assembly daoAssembly, Database databaseToBackup)
+        public DaoBackup(Assembly daoAssembly, IDatabase databaseToBackup)
             : this(daoAssembly, databaseToBackup, ServiceRegistry.Default.Get<IRepository>())
         { }
-    }
+    }*/
 }
