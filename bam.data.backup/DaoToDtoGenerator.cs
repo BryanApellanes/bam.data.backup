@@ -110,6 +110,22 @@ namespace Bam.Net.Data.Repositories
         }
 
         /// <summary>
+        /// Write dto source code into the specified namespace placing generated files into the specified directory
+        /// </summary>
+        /// <param name="nameSpace"></param>
+        /// <param name="writeSourceTo"></param>
+        public void WriteDtoSource(string nameSpace, string writeSourceTo)
+        {
+            Args.ThrowIfNull(DaoAssembly, "DaoAssembly");
+
+            foreach (Type daoType in DaoAssembly.GetTypes()
+                .Where(t => t.HasCustomAttributeOfType<TableAttribute>()))
+            {
+                Dto.WriteRenderedDto(nameSpace, writeSourceTo, daoType, pi => pi.HasCustomAttributeOfType<ColumnAttribute>());
+            }
+        }
+
+        /// <summary>
         /// Write dto source code to the specified directory
         /// </summary>
         /// <param name="writeSourceTo"></param>
@@ -144,6 +160,7 @@ namespace Bam.Net.Data.Repositories
             string nameSpace = oneTable.Namespace;
             return nameSpace;
         }
+
         private DirectoryInfo SetSourceDir(string writeSourceTo)
         {
             DirectoryInfo sourceDir = new DirectoryInfo(writeSourceTo);
@@ -158,7 +175,7 @@ namespace Bam.Net.Data.Repositories
                     TempDir = sourceDir.FullName;
                     ExceptionMessage = Args.GetMessageAndStackTrace(ex);
                     FireEvent(DeleteTempSourceDirectoryFailed, EventArgs.Empty);
-                    throw ex;
+                    throw;
                 }
             }
 

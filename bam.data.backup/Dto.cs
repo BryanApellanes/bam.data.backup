@@ -15,9 +15,9 @@ namespace Bam.Net.Data.Repositories
     /// A Data Transfer Object.  Represents the properties
     /// of Dao types without the associated methods.  
     /// </summary>
-    public partial class Dto
+    public class Dto
     {
-        public const string DefaultNamespace = "Bam.Net.Data.Dto";
+        public const string DefaultNamespace = "Bam.Data.Dto";
         public string ToJson()
         {
             return ObjectExtensions.ToJson(this);
@@ -109,7 +109,7 @@ namespace Bam.Net.Data.Repositories
             return InstanceFor(DefaultNamespace, typeName, dictionary);
         }
         
-        public static dynamic InstanceFor(string nameSpace, string typeName, Dictionary<object, object> dictionary, Func<MetadataReference[]> getMetadataReferences = null)
+        public static dynamic InstanceFor(string nameSpace, string typeName, Dictionary<object, object> dictionary)
         {
             Type type = TypeFor(nameSpace, typeName, dictionary);
             return dictionary.ToInstance(type);

@@ -14,7 +14,7 @@ using MongoDB.Driver;
 
 namespace Bam.Net.Data.Repositories
 {
-    public partial class DtoModel
+    public class DtoModel
 	{
 		IRenderer _renderer;
 		public DtoModel(Type dynamicDtoType, string nameSpace, IRenderer renderer = null)
