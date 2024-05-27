@@ -6,13 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Bam.Net.Data.SQLite;
-using Bam.Net.Logging;
+using Bam.Data.SQLite;
+using Bam.Logging;
 using System.Reflection;
 using System.Collections;
 using System.Data;
 
-namespace Bam.Net.Data.Repositories
+namespace Bam.Data.Repositories
 {
     /// <summary>
     /// Represents a backup of a Dao database schema and the data therein

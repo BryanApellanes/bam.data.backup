@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Bam.Net.Logging;
-using Bam.Net.Incubation;
+using Bam.Logging;
+using Bam.Incubation;
 using System.Reflection;
 
-namespace Bam.Net.Data.Repositories // shared
+namespace Bam.Data.Repositories // shared
 {
 	public partial class BackedupDatabase: Database
 	{

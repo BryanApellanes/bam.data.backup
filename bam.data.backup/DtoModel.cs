@@ -6,13 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Bam.Net.Data.Schema;
-//using Bam.Net.Presentation.Handlebars;
-using Bam.Net.ServiceProxy;
+using Bam.Data.Schema;
+//using Bam.Presentation.Handlebars;
+using Bam.ServiceProxy;
 using Microsoft.CodeAnalysis;
 using MongoDB.Driver;
 
-namespace Bam.Net.Data.Repositories
+namespace Bam.Data.Repositories
 {
     public class DtoModel
 	{
@@ -86,7 +86,7 @@ namespace Bam.Net.Data.Repositories
 		public Type DtoType { get; set; }
         public string Render()
         {
-			return _renderer.Render(this);//Bam.Net.Handlebars.Render("Dto", this);
+			return _renderer.Render(this);//Bam.Handlebars.Render("Dto", this);
         }
 
         private string GetUsings()

@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Bam.Net.Services.DataReplication;
+using Bam.Services.DataReplication;
 using Microsoft.CodeAnalysis;
 
-namespace Bam.Net
+namespace Bam
 {
     public class MetadataReferenceResolver
     {

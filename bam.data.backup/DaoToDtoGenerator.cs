@@ -6,14 +6,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Bam.Net;
+using Bam;
 using System.Reflection;
 using System.IO;
 using System.CodeDom.Compiler;
-using Bam.Net.Logging;
-using Bam.Net.Configuration;
+using Bam.Logging;
+using Bam.Configuration;
 
-namespace Bam.Net.Data.Repositories
+namespace Bam.Data.Repositories
 {
     /// <summary>
     /// A generator that will create Dto's from Dao's.

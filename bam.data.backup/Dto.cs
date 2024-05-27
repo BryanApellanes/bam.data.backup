@@ -9,7 +9,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using Microsoft.CodeAnalysis;
 
-namespace Bam.Net.Data.Repositories
+namespace Bam.Data.Repositories
 {
     /// <summary>
     /// A Data Transfer Object.  Represents the properties
