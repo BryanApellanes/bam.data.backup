@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Bam.Data.Schema;
+using Bam.Generators;
 //using Bam.Presentation.Handlebars;
 using Bam.ServiceProxy;
 using Microsoft.CodeAnalysis;
@@ -16,16 +17,16 @@ namespace Bam.Data.Repositories
 {
     public class DtoModel
 	{
-		IRenderer _renderer;
-		public DtoModel(Type dynamicDtoType, string nameSpace, IRenderer renderer = null)
+		readonly IRenderer _renderer;
+		public DtoModel(Type dynamicDtoType, string nameSpace, IRenderer? renderer = null)
 		{
 			TypeName = dynamicDtoType.Name;
-			_renderer = renderer;
+			_renderer = renderer ?? new HandlebarsTemplateRenderer();
 			List<string> properties = new System.Collections.Generic.List<string>();
 			HashSet<Type> types = new HashSet<Type>();
 			foreach(PropertyInfo p in dynamicDtoType.GetProperties())
 			{
-				Type type = (p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>)) ? Nullable.GetUnderlyingType(p.PropertyType) : p.PropertyType;
+				Type? type = (p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>)) ? Nullable.GetUnderlyingType(p.PropertyType) : p.PropertyType;
 				properties.Add("\t\tpublic {0} {1} {{get; set;}}\r\n".Format(type.Name, p.Name));
 				types.Add(type);
 			}
@@ -49,6 +50,7 @@ namespace Bam.Data.Repositories
             MetadataReferenceResolver = new MetadataReferenceResolver(types.ToArray());
             ReferenceTypes = types;
             TypeName = typeName;
+            _renderer = new HandlebarsTemplateRenderer();
             Properties = properties.ToArray();
             Namespace = nameSpace;
             CleanTypeName();
@@ -57,12 +59,13 @@ namespace Bam.Data.Repositories
         public DtoModel(string nameSpace, string typeName, Dictionary<object, object> propertyValues)
         {
 	        TypeName = typeName;
+	        _renderer = new HandlebarsTemplateRenderer();
 	        List<string> propertyNames = new List<string>();
 	        HashSet<Type> types = new HashSet<Type>();
 	        foreach (object key in propertyValues.Keys)
 	        {
-		        string propertyName = key.ToString();
-		        object propertyValue = propertyValues[key] == null ? new object() : propertyValues[key];
+		        string? propertyName = key.ToString();
+		        object propertyValue = propertyValues[key];
 		        Type type = propertyValue.GetType();
 		        types.Add(type);
 		        string propertyTypeName = type.Name;
@@ -86,7 +89,7 @@ namespace Bam.Data.Repositories
 		public Type DtoType { get; set; }
         public string Render()
         {
-			return _renderer.Render(this);//Bam.Handlebars.Render("Dto", this);
+			return _renderer.Render("Dto", this);
         }
 
         private string GetUsings()

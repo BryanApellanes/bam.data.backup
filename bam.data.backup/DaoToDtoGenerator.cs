@@ -94,8 +94,8 @@ namespace Bam.Data.Repositories
 
             WriteDtoSource(nameSpace, writeSourceTo);
 
-            sourceDir.ToAssembly(fileName, out CompilerResults results);
-            GeneratedAssemblyInfo result = new GeneratedAssemblyInfo(fileName, results);
+            sourceDir.ToAssembly(fileName, out byte[] bytes);
+            GeneratedAssemblyInfo result = new GeneratedAssemblyInfo(fileName, bytes);
             result.Save();
             return result;
         }

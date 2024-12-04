@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.IO;
 using System.Runtime.CompilerServices;
+using Bam.Generators;
 using Microsoft.CodeAnalysis;
 
 namespace Bam.Data.Repositories
@@ -78,13 +79,13 @@ namespace Bam.Data.Repositories
         /// both properties and methods to create, retrieve, update and delete. 
         /// </summary>
         /// <param name="daoAssembly"></param>
+        /// <param name="fileName"></param>
         /// <returns></returns>
-        public static GeneratedAssemblyInfo GetGeneratedDtoAssemblyInfo(Assembly daoAssembly, string fileName = null)
+        public static GeneratedAssemblyInfo GetGeneratedDtoAssemblyInfo(Assembly daoAssembly, string? fileName = null)
         {
             lock (_genLock)
             {
-                DaoToDtoGenerator generator;
-                string defaultFileName = GetDefaultFileName(daoAssembly, out generator);
+                string defaultFileName = GetDefaultFileName(daoAssembly, out var generator);
                 fileName = fileName ?? defaultFileName;
                 GeneratedAssemblyInfo assemblyInfo = GeneratedAssemblyInfo.GetGeneratedAssembly(fileName, generator);
                 return assemblyInfo;
@@ -104,23 +105,28 @@ namespace Bam.Data.Repositories
             return fileName;
         }
 
-        public static dynamic InstanceFor(string typeName, Dictionary<object, object> dictionary)
+        public static dynamic? InstanceFor(string typeName, Dictionary<object, object> dictionary)
         {
             return InstanceFor(DefaultNamespace, typeName, dictionary);
         }
         
-        public static dynamic InstanceFor(string nameSpace, string typeName, Dictionary<object, object> dictionary)
+        public static dynamic? InstanceFor(string nameSpace, string typeName, Dictionary<object, object> dictionary)
         {
-            Type type = TypeFor(nameSpace, typeName, dictionary);
-            return dictionary.ToInstance(type);
+            Type? type = TypeFor(nameSpace, typeName, dictionary);
+            if (type != null)
+            {
+                return dictionary.ToInstance(type);
+            }
+
+            return null;
         }
 
-        public static Type TypeFor(string typeName, Dictionary<object, object> dictionary)
+        public static Type? TypeFor(string typeName, Dictionary<object, object> dictionary)
         {
             return TypeFor(DefaultNamespace, typeName, dictionary);
         }
         
-        public static Type TypeFor(string nameSpace, string typeName, Dictionary<object, object> dictionary)
+        public static Type? TypeFor(string nameSpace, string typeName, Dictionary<object, object> dictionary)
         {
             return AssemblyFor(nameSpace, typeName, dictionary).GetTypes().FirstOrDefault(t => t.Name.Equals(DtoModel.CleanTypeName(typeName)));
         }
@@ -137,10 +143,24 @@ namespace Bam.Data.Repositories
         
         static readonly Dictionary<string, Assembly> _dtoAssemblies = new Dictionary<string, Assembly>();
         static readonly object _dtoAssemblyLock = new object();
-        public static Assembly AssemblyFor(string assemblyName, string nameSpace, string typeName, Dictionary<object, object> dictionary, Func<MetadataReference[]> getMetaDataReferences = null)
+        public static Assembly AssemblyFor(string assemblyName, string nameSpace, string typeName, Dictionary<object, object> dictionary, Func<MetadataReference[]>? getMetaDataReferences = null)
         {
             nameSpace = nameSpace ?? DefaultNamespace;
             DtoModel dtoModel = new DtoModel(nameSpace, typeName, dictionary);
+            Func<MetadataReference[]>? arg = getMetaDataReferences;
+
+            MetadataReference[] MetaDataReferenceProvider() // local function
+            {
+                List<MetadataReference> results = new List<MetadataReference>();
+                results.AddRange(dtoModel.MetadataReferenceResolver.GetMetaDataReferences().ToArray());
+                if (arg != null)
+                {
+                    results.AddRange(arg());
+                }
+
+                return results.ToArray();
+            }
+
             string dtoSrc = dtoModel.Render();
             string key = dtoSrc.Sha256();
             lock (_dtoAssemblyLock)
@@ -148,11 +168,10 @@ namespace Bam.Data.Repositories
                 if (!_dtoAssemblies.ContainsKey(key))
                 {
                     RoslynCompiler compiler = new RoslynCompiler();
-                    _dtoAssemblies.Add(key, compiler.CompileAssembly(assemblyName, dtoSrc, () => dtoModel.MetadataReferenceResolver.GetMetaDataReferences().ToArray()));
+                    _dtoAssemblies.Add(key, compiler.CompileAssembly(assemblyName, dtoSrc, MetaDataReferenceProvider));
                 }
+                return _dtoAssemblies[key];
             }
-
-            return _dtoAssemblies[key];
         }
         
         public static void WriteRenderedDto(string nameSpace, string writeSourceTo, Type daoType, Func<PropertyInfo, bool> propertyFilter)
