@@ -98,10 +98,10 @@ namespace Bam.Data.Repositories
             return GetDefaultFileName(daoAssembly, out ignore);
         }
 
-        public static string GetDefaultFileName(Assembly daoAssembly, out DaoToDtoGenerator generator)
+        public static string GetDefaultFileName(Assembly daoAssembly, out DaoToDtoGenerator dtoGenerator)
         {
-            generator = new DaoToDtoGenerator(daoAssembly);
-            string fileName = generator.GetDefaultFileName();
+            dtoGenerator = new DaoToDtoGenerator(daoAssembly);
+            string fileName = dtoGenerator.GetDefaultFileName();
             return fileName;
         }
 

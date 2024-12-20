@@ -16,11 +16,9 @@ using Bam.Configuration;
 namespace Bam.Data.Repositories
 {
     /// <summary>
-    /// A generator that will create Dto's from Dao's.
-    /// Intended primarily to enable backup of
-    /// Daos to an ObjectRepository
+    /// A generator that creates data transfer objects from data access objects.
     /// </summary>
-    public partial class DaoToDtoGenerator : Loggable, IAssemblyGenerator
+    public class DaoToDtoGenerator : Loggable, IAssemblyGenerator
     {
         public DaoToDtoGenerator() { }
 
@@ -28,10 +26,6 @@ namespace Bam.Data.Repositories
         {
             this.DaoAssembly = daoAssembly;
         }
-
-        public DaoToDtoGenerator(Dao daoInstance)
-            : this(daoInstance.GetType().Assembly)
-        { }
 
         public Assembly DaoAssembly
         {
@@ -43,12 +37,12 @@ namespace Bam.Data.Repositories
         public event EventHandler DeleteTempSourceDirectoryFailed;
 
         /// <summary>
-        /// Read by Loggable messages if deleting temp directory fails
+        /// Gets or sets the message value that is read by Loggable messages if deleting temp directory fails.
         /// </summary>
         public string ExceptionMessage { get; set; }
 
         /// <summary>
-        /// Read by Loggable messages if deleting temp directory fails
+        /// Gets or sets the 'TempDir' value that is read by Loggable messages if deleting temp directory fails.
         /// </summary>
         public string TempDir { get; set; }
 
@@ -88,7 +82,7 @@ namespace Bam.Data.Repositories
 
         public GeneratedAssemblyInfo GenerateDtoAssembly(string nameSpace, string fileName)
         {
-            Type oneDao = DaoAssembly.GetTypes().FirstOrDefault(t => t.HasCustomAttributeOfType<TableAttribute>());
+            Type? oneDao = DaoAssembly.GetTypes().FirstOrDefault(t => t.HasCustomAttributeOfType<TableAttribute>());
             string writeSourceTo = Path.Combine(RuntimeSettings.ProcessDataFolder, "DtoTemp_{0}".Format(Dao.ConnectionName(oneDao)));
             DirectoryInfo sourceDir = SetSourceDir(writeSourceTo);
 
@@ -141,14 +135,14 @@ namespace Bam.Data.Repositories
                 DaoAssembly.GetTypes()
                 .Where(t => t.HasCustomAttributeOfType<TableAttribute>())
                 .ToInfoHash()
-            ); // this fluent stuff is setting the fileName to the Md5 hash of all the table names comma delimited
+            ); // this fluent stuff is setting the fileName to the SHA256 hash of all the table names comma delimited
         }
 
         private string GetNamespace()
         {
             Args.ThrowIfNull(DaoAssembly, "DaoToDtoGenerator.DaoAssembly");
 
-            Type oneTable = DaoAssembly.GetTypes().FirstOrDefault(t => t.HasCustomAttributeOfType<TableAttribute>());
+            Type? oneTable = DaoAssembly.GetTypes().FirstOrDefault(t => t.HasCustomAttributeOfType<TableAttribute>());
             if (oneTable == null)
             {
                 oneTable = DaoAssembly.GetTypes().FirstOrDefault();
@@ -157,8 +151,8 @@ namespace Bam.Data.Repositories
                     Args.Throw<InvalidOperationException>("The specified DaoAssembly has no types defined");
                 }
             }
-            string nameSpace = oneTable.Namespace;
-            return nameSpace;
+            string? nameSpace = oneTable?.Namespace;
+            return nameSpace ?? "DEFAULT_NAMESPACE";
         }
 
         private DirectoryInfo SetSourceDir(string writeSourceTo)

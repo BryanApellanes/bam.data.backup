@@ -29,10 +29,8 @@ namespace Bam.Data.Repositories
             {
                 return o.Uuid == this.Uuid;
             }
-            else
-            {
-                return base.Equals(obj);
-            }
-        }
+
+            return false;
+		}
 	}
 }
