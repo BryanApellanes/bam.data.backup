@@ -22,7 +22,7 @@ namespace Bam.Data.Repositories
 		public DaoBackup(Assembly daoAssembly, IDatabase databaseToBackup, IRepository backupRepository)			
 		{
 			this.DatabaseToBackup = databaseToBackup;
-			this.DatabaseToRestoreTo = new SQLiteDatabase(DataProvider.Current.AppDataDirectory, "{0}_Restore".Format(databaseToBackup.ConnectionName));
+			this.DatabaseToRestoreTo = new SQLiteDatabase(DataSourceProvider.Current.AppDataDirectory, "{0}_Restore".Format(databaseToBackup.ConnectionName));
 			this.BackupRepository = backupRepository;
 			this.BackupRepository.AddTypes(Dto.GetTypesFromDaos(daoAssembly));
 			this.DaoAssembly = daoAssembly;
