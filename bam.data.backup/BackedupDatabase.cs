@@ -1,14 +1,10 @@
 /*
 	Copyright © Bryan Apellanes 2015  
 */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using Bam.DependencyInjection;
 using Bam.Logging;
-using Bam.Incubation;
-using System.Reflection;
+using Bam.Services;
 
 namespace Bam.Data.Repositories // shared
 {

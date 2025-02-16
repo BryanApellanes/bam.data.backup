@@ -1,17 +1,9 @@
 /*
 	Copyright © Bryan Apellanes 2015  
 */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Bam;
+
 using System.Reflection;
-using System.IO;
-using System.CodeDom.Compiler;
 using Bam.Logging;
-using Bam.Configuration;
 
 namespace Bam.Data.Repositories
 {
