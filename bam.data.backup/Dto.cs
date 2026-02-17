@@ -52,7 +52,7 @@ namespace Bam.Data.Repositories
         /// <returns></returns>
         public static Type TypeFor(Type daoType)
         {
-            return GetTypesFromDaos(daoType.Assembly).FirstOrDefault(t => t.Name.Equals(daoType.Name));
+            return GetTypesFromDaos(daoType.Assembly).FirstOrDefault(t => t.Name.Equals(daoType.Name))!;
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace Bam.Data.Repositories
         {
             string csFile = "{0}.cs".Format(dtoModel.TypeName);
             FileInfo csFileInfo = new FileInfo(Path.Combine(writeSourceTo, csFile));
-            if (!csFileInfo.Directory.Exists)
+            if (!csFileInfo.Directory!.Exists)
             {
                 csFileInfo.Directory.Create();
             }

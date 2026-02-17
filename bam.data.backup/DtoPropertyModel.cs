@@ -18,8 +18,8 @@ namespace Bam.Data.Repositories
 			this.PropertyType = property.PropertyType.Name;
 		}
 
-		public string PropertyName { get; set; }
-		public string PropertyType { get; set; }
-		internal PropertyInfo PropertyInfo { get; set; }
+		public string PropertyName { get; set; } = null!;
+		public string PropertyType { get; set; } = null!;
+		internal PropertyInfo PropertyInfo { get; set; } = null!;
 	}
 }

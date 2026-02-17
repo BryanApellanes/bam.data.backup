@@ -18,7 +18,7 @@ namespace Bam.Data.Repositories
 		public DaoBackup(Assembly daoAssembly, IDatabase databaseToBackup, IRepository backupRepository)			
 		{
 			this.DatabaseToBackup = databaseToBackup;
-			this.DatabaseToRestoreTo = new SQLiteDatabase(DataSourceProvider.Current.AppDataDirectory, "{0}_Restore".Format(databaseToBackup.ConnectionName));
+			this.DatabaseToRestoreTo = new SQLiteDatabase(DataSourceProvider.Current.AppDataDirectory, "{0}_Restore".Format(databaseToBackup.ConnectionName!));
 			this.BackupRepository = backupRepository;
 			this.BackupRepository.AddTypes(Dto.GetTypesFromDaos(daoAssembly));
 			this.DaoAssembly = daoAssembly;
@@ -76,7 +76,7 @@ namespace Bam.Data.Repositories
 		}
 
 		object restoreLock = new object();
-		public HashSet<OldToNewIdMapping> Restore(Database restoreTo, ILogger logger = null)
+		public HashSet<OldToNewIdMapping> Restore(Database restoreTo, ILogger? logger = null)
 		{
 			lock (restoreLock)
 			{
@@ -92,8 +92,8 @@ namespace Bam.Data.Repositories
 			List<PropertyInfo> foreignKeyProperties = dao.GetType().GetProperties().Where(p => p.HasCustomAttributeOfType<ForeignKeyAttribute>()).ToList();
 			foreignKeyProperties.Each(prop =>
 			{
-				ForeignKeyAttribute fk = prop.GetCustomAttribute<ForeignKeyAttribute>(); 
-				dao.Property(prop.Name, temp[fk.ReferencedTable].DbId);
+				ForeignKeyAttribute fk = prop.GetCustomAttribute<ForeignKeyAttribute>()!;
+				dao.Property(prop.Name, temp[fk.ReferencedTable].DbId!);
 			});
 		}
 
@@ -141,11 +141,11 @@ namespace Bam.Data.Repositories
 
 					if (oldReferencingDaoInstances.Count > 0)
 					{
-						List<string> oldReferencingDaoInstanceUuids = oldReferencingDaoInstances.Select(o => o.Property<string>("Uuid")).ToList();
+						List<string> oldReferencingDaoInstanceUuids = oldReferencingDaoInstances.Select(o => o.Property<string>("Uuid")!).ToList();
 
-						ulong oldReferencedId = oldReferencedDao.DbId.Value;
+						ulong oldReferencedId = oldReferencedDao.DbId!.Value;
 						// get the new referenced id
-						ulong whatItShouldBeNow = byUuid[oldReferencedDao.Property<string>("Uuid")].NewId;
+						ulong whatItShouldBeNow = byUuid[oldReferencedDao.Property<string>("Uuid")!].NewId;
 
 						// update the new referencing column to match the newId in the destination where the uuids in oldDaoInstances		
 						committer.Update(fk.Table, new AssignValue(fk.Name, whatItShouldBeNow)).Where(Query.Where("Uuid").In(oldReferencingDaoInstanceUuids.ToArray()));
@@ -164,7 +164,7 @@ namespace Bam.Data.Repositories
 			{
 				dao.GetProperties().Where(prop => prop.HasCustomAttributeOfType<ForeignKeyAttribute>()).Each(prop =>
 				{
-					ForeignKeyAttribute fk = prop.GetCustomAttribute<ForeignKeyAttribute>();
+					ForeignKeyAttribute fk = prop.GetCustomAttribute<ForeignKeyAttribute>()!;
 					foreach(Type daoType in DaoTypes)
 					{
 						if (daoType.Name.Equals(fk.ReferencedTable))
@@ -229,7 +229,7 @@ namespace Bam.Data.Repositories
 
 		private void SaveDtoToBackupRepository(object dtoInstance)
 		{
-			object existing = BackupRepository.Retrieve(dtoInstance.GetType(), dtoInstance.Property<string>("Uuid"));
+			object? existing = BackupRepository.Retrieve(dtoInstance.GetType(), dtoInstance.Property<string>("Uuid")!);
 			if (existing != null)
 			{
 				BackupRepository.Save(dtoInstance);
@@ -240,11 +240,11 @@ namespace Bam.Data.Repositories
 			}
 		}
 
-		private HashSet<OldToNewIdMapping> RestoreData(Database restoreTo, ILogger logger)
+		private HashSet<OldToNewIdMapping> RestoreData(Database restoreTo, ILogger? logger)
 		{
 			HashSet<OldToNewIdMapping> result = new HashSet<OldToNewIdMapping>();
 			DatabaseToRestoreTo = restoreTo;
-			DatabaseToRestoreTo.TryEnsureSchema(DaoTypes.First(), logger);
+			DatabaseToRestoreTo.TryEnsureSchema(DaoTypes.First(), logger!);
 
 			Dictionary<string, Dao> tempForeignKeyTargets = InsertTempForeignKeyTargets();
 			// for all the poco types load them all from the repo
@@ -252,15 +252,15 @@ namespace Bam.Data.Repositories
 			{
 				// copy the poco as a dao and save it into the restoreTo
 				IEnumerable<object> all = BackupRepository.RetrieveAll(pocoType);
-				Type daoType = DaoTypes.FirstOrDefault(t => t.Name.Equals(pocoType.Name));
+				Type daoType = DaoTypes.FirstOrDefault(t => t.Name.Equals(pocoType.Name))!;
 				Args.ThrowIf<InvalidOperationException>(daoType == null, "The Dto of type {0} didn't have a corresponding Dao type", pocoType.Name);
 
 				foreach (object poco in all)
 				{
 					string uuid = Meta.GetUuid(poco, true);
-					Dao dao = (Dao)poco.CopyAs(daoType);
+					Dao dao = (Dao)poco.CopyAs(daoType!);
 					dao.DbId = null;
-					dao.DataRow = null;
+					dao.DataRow = null!;
 					dao.ForceInsert = true;
 					dao.UniqueFilterProvider = (d) => Query.Where("Uuid") == uuid;
 					ForceUpdateIfExistsInTarget(uuid, dao);
@@ -270,9 +270,9 @@ namespace Bam.Data.Repositories
 					OldToNewIdMapping idMapping = new OldToNewIdMapping
 					{
 						PocoType = pocoType,
-						DaoType = daoType,
-						OldId = (ulong)poco.Property("Id"),
-						NewId = (ulong)dao.DbId,
+						DaoType = daoType!,
+						OldId = (ulong)poco.Property("Id")!,
+						NewId = (ulong)dao.DbId!,
 						Uuid = uuid
 					};
 

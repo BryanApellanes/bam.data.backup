@@ -10,11 +10,11 @@ namespace Bam.Data.Repositories // shared
 {
 	public partial class BackedupDatabase: Database
 	{
-		public IRepository Repository { get; private set; }
+		public IRepository Repository { get; private set; } = null!;
 
 		protected IDatabase Database => Backup.DatabaseToBackup;
 
-		public DaoBackup Backup { get; set; }
+		public DaoBackup Backup { get; set; } = null!;
 
 		#region IDatabase Members
 
@@ -25,11 +25,11 @@ namespace Bam.Data.Repositories // shared
 
 		public new string ConnectionName
 		{
-			get => Database.ConnectionName;
+			get => Database.ConnectionName!;
 			set => Database.ConnectionName = value;
 		}
 
-		public override string ConnectionString
+		public override string? ConnectionString
 		{
 			get => Database.ConnectionString;
 			set => Database.ConnectionString = value;
@@ -65,7 +65,7 @@ namespace Bam.Data.Repositories // shared
 			Database.ExecuteSql<T>(builder);
 		}
 
-		public new Dictionary<EnumType, T> FillEnumDictionary<EnumType, T>(Dictionary<EnumType, T> dictionary, string nameColumn) where T : Dao, new()
+		public new Dictionary<EnumType, T> FillEnumDictionary<EnumType, T>(Dictionary<EnumType, T> dictionary, string nameColumn) where T : Dao, new() where EnumType : notnull
 		{
 			return Database.FillEnumDictionary<EnumType, T>(dictionary, nameColumn);
 		}
@@ -100,9 +100,9 @@ namespace Bam.Data.Repositories // shared
 			return Database.GetDbConnection();
 		}
 
-		public new void TryEnsureSchema(Type type, ILogger logger = null)
+		public new void TryEnsureSchema(Type type, ILogger? logger = null)
 		{
-			Database.TryEnsureSchema(type, logger);
+			Database.TryEnsureSchema(type, logger!);
 		}
 
 		public new int MaxConnections

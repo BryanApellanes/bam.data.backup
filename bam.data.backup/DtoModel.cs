@@ -21,7 +21,7 @@ namespace Bam.Data.Repositories
 			foreach(PropertyInfo p in dynamicDtoType.GetProperties())
 			{
 				Type? type = (p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>)) ? Nullable.GetUnderlyingType(p.PropertyType) : p.PropertyType;
-				properties.Add("\t\tpublic {0} {1} {{get; set;}}\r\n".Format(type.Name, p.Name));
+				properties.Add("\t\tpublic {0} {1} {{get; set;}}\r\n".Format(type!.Name, p.Name));
 				types.Add(type);
 			}
 			Properties = properties.ToArray();
@@ -80,7 +80,7 @@ namespace Bam.Data.Repositories
 		public string Namespace { get; set; }
 		public string[] Properties { get; set; }
 
-		public Type DtoType { get; set; }
+		public Type DtoType { get; set; } = null!;
         public string Render()
         {
 			return _renderer.Render("Dto", this);

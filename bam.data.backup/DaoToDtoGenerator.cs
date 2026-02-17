@@ -23,20 +23,20 @@ namespace Bam.Data.Repositories
         {
             get;
             set;
-        }
+        } = null!;
 
         [Verbosity(VerbosityLevel.Warning, SenderMessageFormat = "Unable to delete temp source directory: {TempDir}\r\n{ExceptionMessage}")]
-        public event EventHandler DeleteTempSourceDirectoryFailed;
+        public event EventHandler DeleteTempSourceDirectoryFailed = null!;
 
         /// <summary>
         /// Gets or sets the message value that is read by Loggable messages if deleting temp directory fails.
         /// </summary>
-        public string ExceptionMessage { get; set; }
+        public string ExceptionMessage { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets the 'TempDir' value that is read by Loggable messages if deleting temp directory fails.
         /// </summary>
-        public string TempDir { get; set; }
+        public string TempDir { get; set; } = null!;
 
         public void WriteSource(string writeSourceTo)
         {
@@ -75,7 +75,7 @@ namespace Bam.Data.Repositories
         public GeneratedAssemblyInfo GenerateDtoAssembly(string nameSpace, string fileName)
         {
             Type? oneDao = DaoAssembly.GetTypes().FirstOrDefault(t => t.HasCustomAttributeOfType<TableAttribute>());
-            string writeSourceTo = Path.Combine(RuntimeSettings.ProcessDataFolder, "DtoTemp_{0}".Format(Dao.ConnectionName(oneDao)));
+            string writeSourceTo = Path.Combine(RuntimeSettings.ProcessDataFolder, "DtoTemp_{0}".Format(Dao.ConnectionName(oneDao!)));
             DirectoryInfo sourceDir = SetSourceDir(writeSourceTo);
 
             WriteDtoSource(nameSpace, writeSourceTo);
